@@ -1,0 +1,37 @@
+# Agent Monitor Requirements
+# Core dependencies for the agent-monitor Python package
+
+# HTTP requests for API communication
+requests>=2.25.0
+
+# System monitoring (optional, for performance monitoring examples)
+psutil>=5.8.0
+
+# Development dependencies (optional)
+# pytest>=6.0.0
+# pytest-cov>=2.10.0
+# black>=21.0.0
+# flake8>=3.8.0
+
+# Optional framework dependencies
+# These are not required but enable enhanced monitoring if available
+
+# LangChain integration (optional)
+# langchain>=0.1.0
+# langchain-core>=0.1.0
+# langchain-community>=0.0.1
+
+# LangGraph integration (optional)
+# langgraph>=0.0.1
+
+# OpenAI SDK (optional)
+# openai>=1.0.0
+
+# Anthropic SDK (optional)
+# anthropic>=0.8.0
+
+# AutoGen integration (optional)
+# pyautogen>=0.2.0
+
+# CrewAI integration (optional)
+# crewai>=0.1.0

@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""
+CLI Entry Point for Agent Monitor
+
+This script provides a command-line interface for the agent-monitor package.
+"""
+
+if __name__ == "__main__":
+    from agent_monitor.cli import main
+    import sys
+    sys.exit(main())

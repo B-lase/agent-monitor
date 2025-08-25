@@ -1,0 +1,398 @@
+# Agent Monitor
+
+A Python package for monitoring and tracking AI agents in real-time through a centralized dashboard. Send agent execution data, performance metrics, and status updates to your monitoring dashboard with just a few lines of code.
+
+## Overview
+
+Agent Monitor provides seamless integration between your AI agents and monitoring dashboards. Whether you're using LangGraph, LangChain, or custom agent frameworks, this package automatically detects your setup and provides real-time monitoring capabilities.
+
+### Key Features
+
+- **Simple Integration**: Add monitoring with just 3 lines of code
+- **Framework Auto-Detection**: Automatically works with LangGraph, LangChain, and other popular frameworks
+- **Real-Time Tracking**: Monitor agent status, execution progress, and performance metrics
+- **Secure Authentication**: API key-based authentication for secure data transmission
+- **Flexible Configuration**: Support for custom endpoints and configuration options
+- **Lightweight**: Minimal overhead on agent performance
+
+## Installation
+
+### Option 1: Install from GitHub (Recommended)
+
+```bash
+pip install git+https://github.com/B-lase/agent-monitor.git
+```
+
+### Option 2: Local Development Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/B-lase/agent-monitor.git
+cd agent-monitor
+```
+
+2. Install in development mode:
+```bash
+pip install -e .
+```
+
+### Option 3: Install from Source
+
+```bash
+git clone https://github.com/B-lase/agent-monitor.git
+cd agent-monitor
+pip install .
+```
+
+## Quick Start
+
+### 1. Initialize the Monitor
+
+Set up your monitoring configuration:
+
+```python
+import agent_monitor
+
+# SECURITY: Use environment variables or secure configuration
+# Set environment variable: AGENT_MONITOR_API_KEY=your-service-role-key
+import os
+api_key = os.getenv('AGENT_MONITOR_API_KEY')
+if not api_key:
+    raise ValueError("AGENT_MONITOR_API_KEY environment variable is required")
+
+# Initialize with your API credentials
+agent_monitor.init(
+    api_key=api_key,  # Use service role key for agent monitoring
+    dashboard_url="https://0f3jus9vnfzq.space.minimax.io"
+)
+```
+
+### 2. Track Your Agent
+
+Monitor agent execution with automatic framework detection:
+
+```python
+from agent_monitor import AgentMonitor
+
+# Create a monitor instance for your agent
+monitor = AgentMonitor(
+    agent_id="my-trading-bot",
+    agent_name="Trading Bot",
+    agent_type="autonomous"
+)
+
+# Start tracking
+monitor.start_session()
+
+# Log agent activities
+monitor.log_event("initialization", {"model": "gpt-4", "tools": ["web_search", "calculator"]})
+monitor.log_event("decision", {"action": "buy", "symbol": "AAPL", "quantity": 100})
+monitor.log_event("completion", {"status": "success", "profit": 250.00})
+
+# End tracking
+monitor.end_session()
+```
+
+### 3. Framework Integration Examples
+
+#### LangGraph Integration
+
+```python
+import agent_monitor
+from langgraph import StateGraph
+
+# Initialize monitoring
+agent_monitor.init(api_key="your-api-key", dashboard_url="your-dashboard-url")
+
+# Your LangGraph workflow will be automatically monitored
+workflow = StateGraph(YourStateClass)
+# ... define your workflow nodes and edges
+
+app = workflow.compile()
+result = app.invoke({"input": "your input"})
+```
+
+#### LangChain Integration
+
+```python
+import agent_monitor
+from langchain.agents import initialize_agent
+from langchain.llms import OpenAI
+
+# Initialize monitoring
+agent_monitor.init(api_key="your-api-key", dashboard_url="your-dashboard-url")
+
+# Your LangChain agent will be automatically monitored
+llm = OpenAI(temperature=0)
+agent = initialize_agent(tools, llm, agent="zero-shot-react-description")
+result = agent.run("What is the weather like today?")
+```
+
+## Configuration
+
+### Environment Variables
+
+You can configure the package using environment variables:
+
+```bash
+export AGENT_MONITOR_API_KEY="your-api-key"
+export AGENT_MONITOR_DASHBOARD_URL="https://0f3jus9vnfzq.space.minimax.io"
+export AGENT_MONITOR_TIMEOUT="30"  # Request timeout in seconds
+export AGENT_MONITOR_RETRY_COUNT="3"  # Number of retry attempts
+```
+
+### Programmatic Configuration
+
+```python
+import agent_monitor
+
+# Configure with custom settings
+agent_monitor.init(
+    api_key="your-api-key",
+    dashboard_url="https://0f3jus9vnfzq.space.minimax.io",
+    timeout=30,
+    retry_count=3,
+    enable_logging=True
+)
+```
+
+## API Reference
+
+### `agent_monitor.init()`
+
+Initialize the monitoring system.
+
+**Parameters:**
+- `api_key` (str): Your dashboard API key
+- `dashboard_url` (str): URL of your monitoring dashboard
+- `timeout` (int, optional): Request timeout in seconds (default: 30)
+- `retry_count` (int, optional): Number of retry attempts (default: 3)
+- `enable_logging` (bool, optional): Enable debug logging (default: False)
+
+### `AgentMonitor`
+
+Main monitoring class for tracking agent activities.
+
+#### Constructor
+
+```python
+AgentMonitor(
+    agent_id: str,
+    agent_name: str,
+    agent_type: str = "autonomous",
+    metadata: dict = None
+)
+```
+
+**Parameters:**
+- `agent_id` (str): Unique identifier for your agent
+- `agent_name` (str): Human-readable name for your agent
+- `agent_type` (str): Type of agent ("autonomous", "reactive", "collaborative")
+- `metadata` (dict, optional): Additional metadata about your agent
+
+#### Methods
+
+##### `start_session()`
+Begin a new monitoring session.
+
+##### `end_session()`
+End the current monitoring session.
+
+##### `log_event(event_type: str, data: dict)`
+Log an agent event.
+
+**Parameters:**
+- `event_type` (str): Type of event ("initialization", "decision", "action", "completion", "error")
+- `data` (dict): Event-specific data
+
+##### `update_status(status: str)`
+Update the agent's current status.
+
+**Parameters:**
+- `status` (str): Current status ("idle", "running", "paused", "error", "completed")
+
+##### `log_metric(metric_name: str, value: float, unit: str = None)`
+Log a performance metric.
+
+**Parameters:**
+- `metric_name` (str): Name of the metric
+- `value` (float): Metric value
+- `unit` (str, optional): Unit of measurement
+
+## Advanced Usage
+
+### Custom Event Types
+
+```python
+monitor = AgentMonitor("custom-agent", "Custom Agent")
+monitor.start_session()
+
+# Log custom events with rich data
+monitor.log_event("model_selection", {
+    "models_considered": ["gpt-4", "claude-3", "llama-2"],
+    "selected_model": "gpt-4",
+    "selection_criteria": "performance",
+    "confidence_score": 0.95
+})
+
+monitor.log_event("tool_usage", {
+    "tool_name": "web_search",
+    "query": "latest stock prices",
+    "results_count": 10,
+    "processing_time_ms": 234
+})
+```
+
+### Performance Metrics
+
+```python
+monitor = AgentMonitor("performance-agent", "Performance Agent")
+monitor.start_session()
+
+# Track various performance metrics
+monitor.log_metric("response_time", 1.23, "seconds")
+monitor.log_metric("memory_usage", 256.7, "MB")
+monitor.log_metric("accuracy", 0.94, "percentage")
+monitor.log_metric("cost", 0.05, "USD")
+```
+
+### Error Handling
+
+```python
+monitor = AgentMonitor("error-handling-agent", "Error Handling Agent")
+monitor.start_session()
+
+try:
+    # Your agent logic here
+    result = perform_agent_task()
+    monitor.log_event("success", {"result": result})
+except Exception as e:
+    monitor.log_event("error", {
+        "error_type": type(e).__name__,
+        "error_message": str(e),
+        "stack_trace": traceback.format_exc()
+    })
+    monitor.update_status("error")
+```
+
+## Framework-Specific Features
+
+### Auto-Detection
+
+The package automatically detects popular AI frameworks and integrates seamlessly:
+
+- **LangGraph**: Automatically monitors graph execution, node transitions, and state changes
+- **LangChain**: Tracks agent decisions, tool usage, and chain executions
+- **AutoGen**: Monitors multi-agent conversations and collaboration patterns
+- **Custom Frameworks**: Provides manual integration options for custom setups
+
+### LangGraph Advanced Integration
+
+```python
+import agent_monitor
+from langgraph import StateGraph
+
+# Initialize with LangGraph-specific settings
+agent_monitor.init(
+    api_key="your-api-key",
+    dashboard_url="your-dashboard-url",
+    framework_config={
+        "langgraph": {
+            "track_state_changes": True,
+            "track_node_execution": True,
+            "track_edge_traversal": True
+        }
+    }
+)
+
+# Your LangGraph workflow will be automatically enhanced with monitoring
+workflow = StateGraph(YourStateClass)
+workflow.add_node("node1", your_node_function)
+workflow.add_node("node2", your_other_node_function)
+workflow.add_edge("node1", "node2")
+
+app = workflow.compile()
+result = app.invoke({"input": "your input"})
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Authentication Errors**
+   - Verify your API key is correct
+   - Ensure your dashboard URL is accessible
+   - Check network connectivity
+
+2. **Framework Detection Issues**
+   - Ensure your framework is installed and importable
+   - Initialize monitoring before creating your agents
+   - Check compatibility with your framework version
+
+3. **Performance Issues**
+   - Reduce monitoring frequency for high-throughput applications
+   - Use batch logging for multiple events
+   - Consider async mode for non-blocking operations
+
+### Debug Mode
+
+```python
+import agent_monitor
+import logging
+
+# Enable debug logging
+logging.basicConfig(level=logging.DEBUG)
+
+agent_monitor.init(
+    api_key="your-api-key",
+    dashboard_url="your-dashboard-url",
+    enable_logging=True
+)
+```
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/B-lase/agent-monitor.git
+cd agent-monitor
+```
+
+2. Create a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install development dependencies:
+```bash
+pip install -e ".[dev]"
+```
+
+4. Run tests:
+```bash
+pytest tests/
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support and questions:
+- Create an issue on [GitHub](https://github.com/B-lase/agent-monitor/issues)
+- Check our [Documentation](https://docs.agent-monitor.dev)
+- Join our [Discord Community](https://discord.gg/agent-monitor)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+
+---
+
+**Agent Monitor** - Making AI agent monitoring simple and powerful.
